@@ -1,0 +1,60 @@
+# Nether fungus configuration
+# For crimson and warped forests
+
+biomes:
+  - CRIMSON_FOREST
+  - WARPED_FOREST
+  - NETHER_WASTES
+
+materials:
+  WARPED_FUNGUS:
+    # Blue warped trees
+    warped1:
+      weight: 40
+      x-offset: 0
+      y-offset: 0
+      z-offset: 0
+    warped2:
+      weight: 35
+      x-offset: 0
+      y-offset: 0
+      z-offset: 0
+    warped3:
+      weight: 25
+      x-offset: 0
+      y-offset: 0
+      z-offset: 0
+
+  CRIMSON_FUNGUS:
+    # Red crimson trees
+    crimson1:
+      weight: 45
+      x-offset: 0
+      y-offset: 0
+      z-offset: 0
+    crimson2:
+      weight: 30
+      x-offset: 0
+      y-offset: 0
+      z-offset: 0
+    crimson3:
+      weight: 25
+      x-offset: 0
+      y-offset: 0
+      z-offset: 0
+
+  BROWN_MUSHROOM:
+    # Custom mushroom trees
+    mushroom_brown:
+      weight: 100
+      x-offset: 0
+      y-offset: 0
+      z-offset: 0
+
+  RED_MUSHROOM:
+    # Custom red mushroom trees  
+    mushroom_red:
+      weight: 100
+      x-offset: 0
+      y-offset: 0
+      z-offset: 0

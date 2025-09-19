@@ -1,0 +1,39 @@
+# Modern wood types configuration
+# Supports new 1.19+ and 1.20+ materials
+
+biomes:
+  - CHERRY_GROVE
+  - MANGROVE_SWAMP
+  - BAMBOO_JUNGLE
+
+materials:
+  CHERRY_SAPLING:
+    # Pink cherry trees
+    cherry1:
+      weight: 60
+      x-offset: 0
+      y-offset: 0
+      z-offset: 0
+    cherry2:
+      weight: 40
+      x-offset: 0
+      y-offset: 0
+      z-offset: 0
+
+  MANGROVE_PROPAGULE:
+    # Swamp mangrove trees
+    mangrove1:
+      weight: 50
+      x-offset: 0
+      y-offset: -1  # Mangroves often need to be planted slightly lower
+      z-offset: 0
+    mangrove2:
+      weight: 30
+      x-offset: 0
+      y-offset: -1
+      z-offset: 0
+    mangrove_large:
+      weight: 20
+      x-offset: 0
+      y-offset: -1
+      z-offset: 0

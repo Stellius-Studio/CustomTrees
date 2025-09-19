@@ -1,8 +1,10 @@
 author: multitallented
 database: false
-description: Makes saplings and mushrooms grow into worldedit schematics
+description: Makes saplings and mushrooms grow into custom WorldEdit schematics
 main: org.redcastlemedia.bukkit.customtrees.CustomTrees
 name: CustomTrees
 load: POSTWORLD
-version: 1.0-SNAPSHOT
-api-version: 1.14
+version: 2.0.0
+api-version: 1.21
+depend: [WorldEdit]
+softdepend: [FastAsyncWorldEdit]

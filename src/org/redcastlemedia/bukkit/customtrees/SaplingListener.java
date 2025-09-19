@@ -2,6 +2,7 @@ package org.redcastlemedia.bukkit.customtrees;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
@@ -37,7 +38,8 @@ public class SaplingListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(ignoreCancelled = true) @SuppressWarnings("unused")
+    @EventHandler(ignoreCancelled = true)
+    @SuppressWarnings("unused")
     public void onSaplingGrowth(StructureGrowEvent event) {
         Material saplingMaterial = event.getLocation().getBlock().getType();
         if (!Util.isGrowableMaterial(saplingMaterial)) {
@@ -46,14 +48,13 @@ public class SaplingListener implements Listener {
 
         Biome biome = event.getLocation().getBlock().getBiome();
 
-        HashMap<Material, HashSet<CustomTree>> treeMap = CustomTrees.trees.get(biome.name());
+        HashMap<Material, HashSet<CustomTree>> treeMap = CustomTrees.trees.get(biome.toString());
         if (treeMap == null) {
             treeMap = CustomTrees.trees.get("DEFAULT");
             if (treeMap == null) {
                 return;
             }
         }
-
 
         File schematicFile = null;
         int xOffset = 0;
@@ -81,7 +82,7 @@ public class SaplingListener implements Listener {
                 if (randomWeight > 0) {
                     continue;
                 }
-                File schematicsFolder = new File (plugin.getDataFolder(), "schematics");
+                File schematicsFolder = new File(plugin.getDataFolder(), "schematics");
                 schematicFile = new File(schematicsFolder, customTree.getName() + ".schematic");
 
                 if (!schematicFile.exists()) {
@@ -97,13 +98,13 @@ public class SaplingListener implements Listener {
 
                 final ClipboardFormat schematicFormat = ClipboardFormats.findByFile(schematicFile);
 
-                if(schematicFormat == null) {
+                if (schematicFormat == null) {
                     plugin.getLogger().log(Level.SEVERE, "corrupt schematic file {0}", schematicFile.getName());
                     return;
                 }
 
-                try {
-                    clipboard = schematicFormat.load(schematicFile);
+                try (FileInputStream fis = new FileInputStream(schematicFile)) {
+                    clipboard = schematicFormat.getReader(fis).read();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -114,7 +115,6 @@ public class SaplingListener implements Listener {
                 plugin.getLogger().log(Level.SEVERE, "no custom tree found");
                 return;
             }
-
 
             event.setCancelled(true);
         }
@@ -142,12 +142,12 @@ public class SaplingListener implements Listener {
             }
 
             BlockVector3 pastePosition = BlockVector3.at(event.getLocation().getX() + xOffset,
-                                              event.getLocation().getY() + yOffset,
-                                              event.getLocation().getZ() + zOffset);
+                    event.getLocation().getY() + yOffset,
+                    event.getLocation().getZ() + zOffset);
 
             int length = clipboard.getRegion().getLength();
             int width = clipboard.getRegion().getWidth();
-            clipboard.setOrigin(BlockVector3.at(width / 2,0,length / 2));
+            clipboard.setOrigin(BlockVector3.at(width / 2, 0, length / 2));
 
             ClipboardHolder clipboardHolder = new ClipboardHolder(clipboard);
             if (rotation != 0) {
@@ -158,12 +158,12 @@ public class SaplingListener implements Listener {
             int b = (int) (event.getLocation().getY() + yOffset);
             int c = (int) (event.getLocation().getZ() + zOffset - (length / 2));
 
-            for (int x=a; x<a+width; x++) {
-                for (int y=b; y<b+clipboard.getRegion().getHeight(); y++) {
-                    for (int z=c; z<c+length; z++) {
+            for (int x = a; x < a + width; x++) {
+                for (int y = b; y < b + clipboard.getRegion().getHeight(); y++) {
+                    for (int z = c; z < c + length; z++) {
 
-                        //skip air blocks
-                        if (clipboard.getBlock(BlockVector3.at(x-a, y-b, z-c))
+                        // skip air blocks
+                        if (clipboard.getBlock(BlockVector3.at(x - a, y - b, z - c))
                                 .getBlockType().getMaterial().isAir()) {
                             continue;
                         }
@@ -173,7 +173,7 @@ public class SaplingListener implements Listener {
                             return;
                         }
 
-                        //TODO possibly check if the area is protected?
+                        // TODO possibly check if the area is protected?
                     }
                 }
             }
@@ -182,7 +182,10 @@ public class SaplingListener implements Listener {
 
             com.sk89q.worldedit.world.World faweWorld = BukkitAdapter.adapt(event.getWorld());
 
-            final EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(faweWorld, -1);
+            final EditSession editSession = WorldEdit.getInstance().newEditSessionBuilder()
+                    .world(faweWorld)
+                    .maxBlocks(-1)
+                    .build();
 
             Operation operation = clipboardHolder
                     .createPaste(editSession)
@@ -190,13 +193,12 @@ public class SaplingListener implements Listener {
                     .ignoreAirBlocks(true)
                     .build();
 
-
             try {
                 Operations.complete(operation);
             } catch (WorldEditException e) {
                 e.printStackTrace();
             }
-            editSession.flushSession();
+            editSession.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
